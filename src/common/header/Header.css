@@ -3,6 +3,8 @@
     height: 36px;
     padding: 8px 32px 8px 16px;
     margin: 0px;
+    display: flex;
+    justify-content: space-between;
 }
 
 @keyframes spinning {
@@ -10,9 +12,20 @@
     to {transform: rotateY(360deg);}
 }
 
-.header img {
-    background-color: #ff7f7f;
-    height: 35px;
-    
-    animation: spinning 8s infinite linear;
+.header-logo-image {
+    width: 50%;
 }
+
+.header-logo-image img {
+    background-color: #ff7f7f;
+    height: 35px;    
+    animation: spinning 8s infinite linear;    
+}
+
+.header-btn {
+    width: 50%;  
+    display: flex;
+    justify-content: end;
+}
+
+
