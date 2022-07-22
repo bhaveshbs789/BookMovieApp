@@ -1,0 +1,18 @@
+.header {
+    background-color: #222;
+    height: 36px;
+    padding: 8px 32px 8px 16px;
+    margin: 0px;
+}
+
+@keyframes spinning {
+    from {transform: rotateY(0deg);}
+    to {transform: rotateY(360deg);}
+}
+
+.header img {
+    background-color: #ff7f7f;
+    height: 35px;
+    
+    animation: spinning 8s infinite linear;
+}
