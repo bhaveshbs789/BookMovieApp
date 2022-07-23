@@ -1,10 +1,10 @@
 import React from 'react';
 import Header from '../../common/header/Header';
 
-export default function Home() {
+export default function Home(props) {
     return (
         <React.Fragment>
-                <Header></Header>
+                <Header baseUrl={props.baseUrl}></Header>
         </React.Fragment>
     )
 }

@@ -28,4 +28,23 @@
     justify-content: end;
 }
 
+.required {
+    /* display: none; */
+    color: red;
+}
+
+
+.dispNone {
+    display: none;
+}
+
+.dispBlock {
+    display: block;
+}
+
+.registration-success {
+    display: block;
+    margin: 10px 0;
+
+}
 
