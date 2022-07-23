@@ -48,3 +48,9 @@
 
 }
 
+.login-error {
+    display: block;
+    margin: 10px 0;
+    color: crimson;
+}
+

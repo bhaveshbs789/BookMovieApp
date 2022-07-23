@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Header.css";
 import logo from "../../assets/logo.svg";
 import {
@@ -74,6 +74,14 @@ export default function Header(props) {
     useState("dispNone");
   const [userLoggedIn, setuserLoginStatus] = useState(false);
   const [registrationSuccess, setRegistrationStatus] = useState(false);
+  const [loginError, setLoginError] = useState(false);
+
+
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     setTabValue(0);
+  //   }, 2000)
+  // }, [registrationSuccess]);
 
   const tabChangeHandler = (e, newTabValue) => {
     setTabValue(newTabValue);
@@ -126,6 +134,17 @@ export default function Header(props) {
     setregisterContactNumber(e.target.value);
   }
 
+  function onLogoutClickHandler() {
+    setuserLoginStatus(false);
+    sessionStorage.removeItem('access-token');
+  }
+
+  function onBookShowClickHandler() {
+    if(sessionStorage.getItem('access-token') == null ) {
+      setModalOpenStatus(true);
+    }    
+  }
+
  async function onloginClickHandler(e) {
     loginUserName === ""
       ? setRequiredLoginUsername("dispBlock")
@@ -153,16 +172,18 @@ export default function Header(props) {
 
       if(rawResponse.ok) {
         setuserLoginStatus(true);
+        sessionStorage.setItem('access-token', rawResponse.headers.get('access-token'));
         console.log(rawResponse.headers.get('access-token'));
         closeModalHandler();
         console.log("Login Success");
       } else {
+        setLoginError(true);
         new Error("Login Failed");
         console.log("Error Logging in.")
       }
 
     } catch(e) {
-      
+        console.log(e.message);
     }
     
     console.log("Login Button Clicked");
@@ -240,7 +261,7 @@ export default function Header(props) {
               style={{ margin: "0 5px" }}
               variant="contained"
               color="primary"
-              onClick={() => alert("Book Show Button clicked")}
+              onClick={onBookShowClickHandler}
             >
               BOOK SHOW
             </Button>
@@ -251,6 +272,7 @@ export default function Header(props) {
                 style={{ margin: "0 5px" }}
                 variant="contained"
                 color="default"
+                onClick={onLogoutClickHandler}
               >
                 LOGOUT
               </Button>
@@ -308,6 +330,9 @@ export default function Header(props) {
           </FormControl>
           <br></br>
           <br></br>
+          {
+            loginError ? <span className="login-error">Incorrect Username or Password. Try Again!</span> : ""
+          }
           <Button
             variant="contained"
             color="primary"
