@@ -126,13 +126,45 @@ export default function Header(props) {
     setregisterContactNumber(e.target.value);
   }
 
-  function onloginClickHandler(e) {
+ async function onloginClickHandler(e) {
     loginUserName === ""
       ? setRequiredLoginUsername("dispBlock")
       : setRequiredLoginUsername("dispNone");
     loginPassword === ""
       ? setRequiredloginPassword("dispBlock")
       : setRequiredloginPassword("dispNone");
+
+    if(loginUserName === "" || loginPassword === "") {
+      return;
+    }
+
+    try {
+      const encodedCredentials = window.btoa(loginUserName + ":" + loginPassword);
+      const rawResponse = await fetch(props.baseUrl + "auth/login" ,{
+        method: "POST",
+        headers: {
+          "Content-Type":"application/json",
+          "Accept":"application/json",
+          "authorization": `Basic ${encodedCredentials}`
+        }
+      })
+
+      const response = await rawResponse.json();
+
+      if(rawResponse.ok) {
+        setuserLoginStatus(true);
+        console.log(rawResponse.headers.get('access-token'));
+        closeModalHandler();
+        console.log("Login Success");
+      } else {
+        new Error("Login Failed");
+        console.log("Error Logging in.")
+      }
+
+    } catch(e) {
+      
+    }
+    
     console.log("Login Button Clicked");
   }
 
@@ -219,7 +251,6 @@ export default function Header(props) {
                 style={{ margin: "0 5px" }}
                 variant="contained"
                 color="default"
-                onClick={alert("Logging out")}
               >
                 LOGOUT
               </Button>
