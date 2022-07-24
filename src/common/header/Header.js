@@ -77,11 +77,16 @@ export default function Header(props) {
   const [loginError, setLoginError] = useState(false);
 
 
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     setTabValue(0);
-  //   }, 2000)
-  // }, [registrationSuccess]);
+  useEffect(() => {
+    setloginUserName("")
+    setloginPassword("");
+    setregisterFirstName("");
+    setregisterLastName("");
+    setregisterPassword("");
+    setregisterEmailId("");
+    setregisterContactNumber("");
+    
+  }, [userLoggedIn, registrationSuccess]);
 
   const tabChangeHandler = (e, newTabValue) => {
     setTabValue(newTabValue);
@@ -134,9 +139,28 @@ export default function Header(props) {
     setregisterContactNumber(e.target.value);
   }
 
-  function onLogoutClickHandler() {
-    setuserLoginStatus(false);
-    sessionStorage.removeItem('access-token');
+  async function onLogoutClickHandler() {
+    try {
+      const rawRepsonse = await fetch(props.baseUrl + "auth/logout", {
+        method :"POST",
+        headers : {
+          "content-type":"application/json",
+          "Accept":"*/*",
+          "authorization":`Bearer ${sessionStorage.getItem('access-token')}`
+        }
+      })
+
+      // const response = await rawRepsonse.json();
+      if(rawRepsonse.ok) {
+        setuserLoginStatus(false);
+        sessionStorage.removeItem('access-token');
+      } else {
+        new Error("Logout Failed");
+      }
+            
+    } catch(e) {
+      console.log("Error Logging out." + e.message);
+    }   
   }
 
   function onBookShowClickHandler() {

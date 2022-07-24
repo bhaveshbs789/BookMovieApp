@@ -45,7 +45,7 @@
 .registration-success {
     display: block;
     margin: 10px 0;
-
+    color:darkgreen;
 }
 
 .login-error {
