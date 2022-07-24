@@ -5,3 +5,27 @@
     font-size: 1rem;
     text-align: center;
 }
+
+img {
+    background-image: url('../../assets/no-results.png');
+    width: auto;
+}
+
+.flex-container {
+    display: flex;
+    
+}
+
+.released-movies {
+    width: 76%;
+    margin: 16px;
+}
+
+.filter-section {
+    width: 24%;
+    margin: 16px;
+}
+
+.released-movies:hover {
+    cursor: pointer;
+}
