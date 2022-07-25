@@ -6,11 +6,6 @@
     text-align: center;
 }
 
-img {
-    background-image: url('../../assets/no-results.png');
-    width: auto;
-}
-
 .flex-container {
     display: flex;
     
@@ -19,6 +14,7 @@ img {
 .released-movies {
     width: 76%;
     margin: 16px;
+    flex-direction: column;
 }
 
 .filter-section {
@@ -29,3 +25,10 @@ img {
 .released-movies:hover {
     cursor: pointer;
 }
+
+.poster {
+    max-width: 100vw;
+    width: 100%;
+    height: auto;
+}
+

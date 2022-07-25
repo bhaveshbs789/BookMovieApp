@@ -68,24 +68,25 @@ export default function Header(props) {
     useState("dispNone");
   const [showRequiredregisterContactNumber, setRequiredRegisterContactNumber] =
     useState("dispNone");
-  const [showRequiredregisterEmailId, setRequiredRegisterEmailIDd] =
+  const [showRequiredregisterEmailId, setRequiredRegisterEmailID] =
     useState("dispNone");
   const [showRequiredregisterPassword, setRequiredRegisterPasword] =
     useState("dispNone");
-  const [userLoggedIn, setuserLoginStatus] = useState(false);
+  const [userLoggedIn, setuserLoginStatus] = useState(
+    sessionStorage.getItem("access-token") === null ? false : true
+  );
   const [registrationSuccess, setRegistrationStatus] = useState(false);
   const [loginError, setLoginError] = useState(false);
-
+  const [showBookShowButton, setShowBookShowButton] = useState(userLoggedIn ? true : false);
 
   useEffect(() => {
-    setloginUserName("")
+    setloginUserName("");
     setloginPassword("");
     setregisterFirstName("");
     setregisterLastName("");
     setregisterPassword("");
     setregisterEmailId("");
     setregisterContactNumber("");
-    
   }, [userLoggedIn, registrationSuccess]);
 
   const tabChangeHandler = (e, newTabValue) => {
@@ -105,6 +106,21 @@ export default function Header(props) {
 
   function openModalHandler() {
     setModalOpenStatus(true);
+    setloginUserName("");
+    setloginPassword("");
+    setregisterFirstName("");
+    setregisterLastName("");
+    setregisterPassword("");
+    setregisterEmailId("");
+    setregisterContactNumber("");
+    setRequiredLoginUsername("dispNone");
+    setRequiredloginPassword("dispNone");
+    setRequiredRegiterFirstName("dispNone");
+    setRequiredRegisterLastName("dispNone");
+    setRequiredRegisterContactNumber("dispNone");
+    setRequiredRegisterEmailID("dispNone");
+    setRequiredRegisterPasword("dispNone");
+    setTabValue(0);
   }
 
   function closeModalHandler() {
@@ -142,34 +158,33 @@ export default function Header(props) {
   async function onLogoutClickHandler() {
     try {
       const rawRepsonse = await fetch(props.baseUrl + "auth/logout", {
-        method :"POST",
-        headers : {
-          "content-type":"application/json",
-          "Accept":"*/*",
-          "authorization":`Bearer ${sessionStorage.getItem('access-token')}`
-        }
-      })
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          Accept: "*/*",
+          authorization: `Bearer ${sessionStorage.getItem("access-token")}`,
+        },
+      });
 
       // const response = await rawRepsonse.json();
-      if(rawRepsonse.ok) {
+      if (rawRepsonse.ok) {
         setuserLoginStatus(false);
-        sessionStorage.removeItem('access-token');
+        sessionStorage.removeItem("access-token");
       } else {
         new Error("Logout Failed");
       }
-            
-    } catch(e) {
+    } catch (e) {
       console.log("Error Logging out." + e.message);
-    }   
+    }
   }
 
   function onBookShowClickHandler() {
-    if(sessionStorage.getItem('access-token') == null ) {
+    if (sessionStorage.getItem("access-token") == null) {
       setModalOpenStatus(true);
-    }    
+    }
   }
 
- async function onloginClickHandler(e) {
+  async function onloginClickHandler(e) {
     loginUserName === ""
       ? setRequiredLoginUsername("dispBlock")
       : setRequiredLoginUsername("dispNone");
@@ -177,39 +192,43 @@ export default function Header(props) {
       ? setRequiredloginPassword("dispBlock")
       : setRequiredloginPassword("dispNone");
 
-    if(loginUserName === "" || loginPassword === "") {
+    if (loginUserName === "" || loginPassword === "") {
       return;
     }
 
     try {
-      const encodedCredentials = window.btoa(loginUserName + ":" + loginPassword);
-      const rawResponse = await fetch(props.baseUrl + "auth/login" ,{
+      const encodedCredentials = window.btoa(
+        loginUserName + ":" + loginPassword
+      );
+      const rawResponse = await fetch(props.baseUrl + "auth/login", {
         method: "POST",
         headers: {
-          "Content-Type":"application/json",
-          "Accept":"application/json",
-          "authorization": `Basic ${encodedCredentials}`
-        }
-      })
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          authorization: `Basic ${encodedCredentials}`,
+        },
+      });
 
       const response = await rawResponse.json();
 
-      if(rawResponse.ok) {
+      if (rawResponse.ok) {
         setuserLoginStatus(true);
-        sessionStorage.setItem('access-token', rawResponse.headers.get('access-token'));
-        console.log(rawResponse.headers.get('access-token'));
+        sessionStorage.setItem(
+          "access-token",
+          rawResponse.headers.get("access-token")
+        );
+        console.log(rawResponse.headers.get("access-token"));
         closeModalHandler();
         console.log("Login Success");
       } else {
         setLoginError(true);
         new Error("Login Failed");
-        console.log("Error Logging in.")
+        console.log("Error Logging in.");
       }
-
-    } catch(e) {
-        console.log(e.message);
+    } catch (e) {
+      console.log(e.message);
     }
-    
+
     console.log("Login Button Clicked");
   }
 
@@ -221,8 +240,8 @@ export default function Header(props) {
       ? setRequiredRegisterLastName("dispBlock")
       : setRequiredRegisterLastName("dispNone");
     registerEmailId === ""
-      ? setRequiredRegisterEmailIDd("dispBlock")
-      : setRequiredRegisterEmailIDd("dispNone");
+      ? setRequiredRegisterEmailID("dispBlock")
+      : setRequiredRegisterEmailID("dispNone");
     registerPassword === ""
       ? setRequiredRegisterPasword("dispBlock")
       : setRequiredRegisterPasword("dispNone");
@@ -281,7 +300,9 @@ export default function Header(props) {
         </div>
         <div className="header-btn">
           <div>
-            <Button
+            {
+              (showBookShowButton && userLoggedIn) ? (
+                <Button
               style={{ margin: "0 5px" }}
               variant="contained"
               color="primary"
@@ -289,6 +310,10 @@ export default function Header(props) {
             >
               BOOK SHOW
             </Button>
+              ) : ("")
+            }
+            
+            
           </div>
           <div>
             {userLoggedIn ? (
@@ -354,9 +379,14 @@ export default function Header(props) {
           </FormControl>
           <br></br>
           <br></br>
-          {
-            loginError ? <span className="login-error">Incorrect Username or Password. Try Again!</span> : ""
-          }
+          {loginError ? (
+            <span className="login-error">
+              Incorrect Username or Password. Try Again!
+            </span>
+          ) : (
+            ""
+          )}
+
           <Button
             variant="contained"
             color="primary"

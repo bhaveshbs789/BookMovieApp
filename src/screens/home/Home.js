@@ -20,28 +20,27 @@ import {
   TextField,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core";
-import "../../assets/no-results.png";
 import {Button} from "@material-ui/core";
+import "../../assets/no-results.png";
+// import { useHistory } from "react-router-dom";
 
 const styles = (theme) => ({
   root: {
     display: "flex",
     flexWrap: "wrap",
-    justifyContent: "space-around",
+    justifyContent: "space-around",    
     overflow: "hidden",
     backgroundColor: theme.palette.background.paper,
   },
   gridList: {
     flexWrap: "nowrap",
-    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
     transform: "translateZ(0)",
+  },
+  gridListMain : {
+    transform:"translateZ(0)"
   },
   title: {
     color: theme.palette.primary.light,
-  },
-  titleBar: {
-    background:
-      "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
   },
   formControls: {
     minWidth: 240,
@@ -62,6 +61,14 @@ const MenuProps = {
   },
 };
 
+
+function ImageWithFallback({ fallback, src, ...props }) {
+    const [imgSrc, setImgSrc] = useState(src);
+    const onError = () => setImgSrc(fallback);
+  
+    return <img src={imgSrc ? imgSrc : fallback} onError={onError} {...props} />;
+  }
+
 function Home(props) {
   const { classes } = props;
   const [movies, setMovies] = useState([]);
@@ -69,6 +76,8 @@ function Home(props) {
   const [releasedMovies, setReleasedMovies] = useState([]);
   const [genres, setGenres] = useState([]);
   const [artists, setArtists] = useState([]);
+
+  // const history = useHistory();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -149,16 +158,26 @@ function Home(props) {
     //   });
   }, []);
 
+  function onReleaseMoviesClickHandler(id) {
+    
+    // console.log("Movie icon clicked");
+    // console.log(id);
+    // console.log(props);
+    props.history.push('/movie/' + id);
+    // history.push('/movie/' + id);
+    
+  }
+
   return (
     <React.Fragment>
       <Header baseUrl={props.baseUrl}></Header>
       <div className="upcoming-movies">Upcoming Movies</div>
 
       <div className={classes.root}>
-        <GridList className={classes.gridList} cols={5} cellHeight={250}>
+        <GridList className={classes.gridList} cols={6} cellHeight={250}>
           {upcComingMovies.map((movie) => (
             <GridListTile key={movie.id}>
-              <img src={movie.poster_url} alt={movie.title} />
+              <img src={movie.poster_url} alt={movie.title} className="poster"/>
               <GridListTileBar title={movie.title} />
             </GridListTile>
           ))}
@@ -166,10 +185,11 @@ function Home(props) {
       </div>
       <div className="flex-container">
         <div className="released-movies">
-          <GridList className={classes.gridList} cols={4} cellHeight={350}>
+          <GridList className={classes.gridListMain} cols={4.5} cellHeight={350}>
             {releasedMovies.map((movie) => (
-              <GridListTile key={movie.id}>
-                <img src={movie.poster_url} alt={movie.title} />
+              <GridListTile key={movie.id} onClick={() => onReleaseMoviesClickHandler(movie.id)}>
+                <img src={movie.poster_url} alt={movie.title} className="poster"/>
+                {/* <ImageWithFallback fallback={"../../assets/no-results.png"} src={movie.poster_url} alt={movie.title}></ImageWithFallback> */}
                 <GridListTileBar title={movie.title} />
               </GridListTile>
             ))}
@@ -179,7 +199,7 @@ function Home(props) {
           <Card>
             <CardContent>
               <Typography className={classes.title}>
-                FIND MOVIES BY :{" "}
+                FIND MOVIES BY :
               </Typography>
               <FormControl className={classes.formControls}>
                 <InputLabel htmlFor="movie-name">Movie Name</InputLabel>
@@ -250,13 +270,17 @@ function Home(props) {
                   InputLabelProps={{ shrink: true }}
                 ></TextField>
               </FormControl>
-              <Button
-                style={{ margin: "0 5px" }}
-                variant="contained"
-                color="primary"
-              >
-                APPLY
-              </Button>
+              <br/><br/>
+              <FormControl className={classes.formControls}>
+                <Button
+                    style={{ margin: "0 5px" }}
+                    variant="contained"
+                    color="primary"
+                >
+                    APPLY
+                </Button>
+              </FormControl>
+              
             </CardContent>
           </Card>
         </div>
