@@ -15,6 +15,7 @@
 
 .right-section {
     width:20%;
+    margin: 0 20px;
 }
 
 .back-to-home {
@@ -30,4 +31,16 @@
 
 .plot-text {
     margin-top: 16px;
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+.artist-section {
+    margin: 16px 0;
+}
+
+iframe {
+    width: 100% !important;
 }
