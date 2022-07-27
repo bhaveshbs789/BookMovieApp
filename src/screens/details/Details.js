@@ -1,21 +1,56 @@
 import { Typography } from "@material-ui/core";
-import React, { useEffect, useState, useMemo, useLayoutEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import YouTube from "react-youtube";
 import Header from "../../common/header/Header";
 import "./Details.css";
 import StarBorderIcon from "@material-ui/icons/StarBorder";
-import {GridList} from "@material-ui/core";
-import {GridListTile} from "@material-ui/core";
-import {GridListTileBar} from "@material-ui/core";
+import { GridList } from "@material-ui/core";
+import { GridListTile } from "@material-ui/core";
+import { GridListTileBar } from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
+
+
+const styles = (theme) => ({    
+    gridList: {
+      flexWrap: "wrap",
+      transform: "translateZ(0)",
+    }
+  });
 
 function ImageRender(props) {
   return <img src={props.posterSource} alt={props.altDetails}></img>;
 }
 
 const Details = function (props) {
+    
   const [movieDetails, setMovieDetails] = useState({});
+  const [stars, setStars] = useState([
+    {
+      id:1,
+      color:"black"
+    },
+    {
+      id:2,
+      color:"black"
+    },
+    {
+      id:3,
+      color:"black"
+    },
+    {
+      id:4,
+      color:"black"
+    },
+    {
+      id:5,
+      color:"black"
+    }
+  ])
 
+
+  const { classes } = props;
+//   console.log("DETAILS PAGE ", props);
   useEffect(() => {
     const fetchMovieData = async () => {
       const rawResponse = await fetch(
@@ -30,11 +65,15 @@ const Details = function (props) {
 
       const data = await rawResponse.json();
       setMovieDetails({ ...data });
-      console.log(data);
+      
     };
 
     fetchMovieData();
   }, []);
+
+  useEffect(() => {
+
+  }, [stars]);
 
   const opts = {
     height: "390",
@@ -44,15 +83,32 @@ const Details = function (props) {
     },
   };
 
-  const starIconClickHanlder = (e) => {
-    console.log(e.target.style);
-    e.target.style.color = "yellow";
-    console.log("Icon ID ", e.target.id);
+  const starIconClickHandler = (id) => {
+    // console.log(e.target.style);
+    // console.log("Icon iD ", id);
+    const newStarIcons = [];
+    for(let star of stars) {
+      let starIcon = star;
+      
+      if(star.id <= id) {
+        starIcon.color ="yellow";
+      } else {
+        star.color = "black";
+      }
+      newStarIcons.push(starIcon);    
+    }
+    // console.log(stars);
+    // console.log(newStarIcons);
+    setStars(newStarIcons);
   };
 
   return (
     <div>
-      <Header baseUrl={props.baseUrl}></Header>
+      <Header
+        baseUrl={props.baseUrl}
+        showBookShowButton="true"
+        movieId={props.match.params.id}
+      ></Header>
       <div className="back-to-home">
         <Link to="/" style={{ textDecoration: "none" }}>
           <Typography>&#60; Back to Home</Typography>
@@ -124,44 +180,52 @@ const Details = function (props) {
             <Typography>
               <span className="bold-text">Rate this movie:</span>
             </Typography>
-            <StarBorderIcon
+            {stars.map((star) => (
+              <StarBorderIcon key={star.id} style={{color: star.color}} onClick={() => starIconClickHandler(star.id)}></StarBorderIcon>
+            ))}
+
+
+            {/* <StarBorderIcon
               id="0"
-              onClick={starIconClickHanlder}
+              onClick={starIconClickHandler}
             ></StarBorderIcon>
             <StarBorderIcon
               id="1"
-              onClick={starIconClickHanlder}
+              onClick={starIconClickHandler}
             ></StarBorderIcon>
             <StarBorderIcon
               id="2"
-              onClick={starIconClickHanlder}
+              onClick={starIconClickHandler}
             ></StarBorderIcon>
             <StarBorderIcon
               id="3"
-              onClick={starIconClickHanlder}
+              onClick={starIconClickHandler}
             ></StarBorderIcon>
             <StarBorderIcon
               id="4"
-              onClick={starIconClickHanlder}
-            ></StarBorderIcon>
+              onClick={starIconClickHandler}
+            ></StarBorderIcon> */}
           </div>
           <div className="artist-section">
             <Typography>
               <span className="bold-text">Artists : </span>
             </Typography>
             <div className="artist-details-section">
-                <GridList cols={2} cellHeight={180}>
-                {movieDetails.artists && movieDetails.artists.map((artist) => (
+              <GridList className={classes.gridList} cols={2} cellHeight={180}>
+                {movieDetails.artists &&
+                  movieDetails.artists.map((artist) => (
                     <GridListTile key={artist.id}>
-                    <img
+                      <img
                         src={artist.profile_url}
                         alt={artist.first_name + " " + artist.last_name}
-                    />
-                        <GridListTileBar title={artist.first_name + " " + artist.last_name} />
+                      />
+                      <GridListTileBar
+                        title={artist.first_name + " " + artist.last_name}
+                      />
                     </GridListTile>
-                ))}
-                </GridList>
-            </div>            
+                  ))}
+              </GridList>
+            </div>
           </div>
         </div>
       </div>
@@ -169,4 +233,4 @@ const Details = function (props) {
   );
 };
 
-export default Details;
+export default withStyles(styles)(Details)

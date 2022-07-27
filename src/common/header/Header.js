@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import Modal from "react-modal";
 import { PropTypes } from "prop-types";
+import { Link } from "react-router-dom";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -35,18 +36,18 @@ function TabPanel(props) {
   );
 }
 
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
+// TabPanel.propTypes = {
+//   children: PropTypes.node,
+//   index: PropTypes.number.isRequired,
+//   value: PropTypes.number.isRequired,
+// };
 
-function allyProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
+TabPanel.propTypes = {
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
   };
-}
+
+
 
 export default function Header(props) {
   const [isModalOpen, setModalOpenStatus] = React.useState(false);
@@ -77,7 +78,7 @@ export default function Header(props) {
   );
   const [registrationSuccess, setRegistrationStatus] = useState(false);
   const [loginError, setLoginError] = useState(false);
-  const [showBookShowButton, setShowBookShowButton] = useState(userLoggedIn ? true : false);
+  // const [showBookShowButton, setShowBookShowButton] = useState(userLoggedIn ? true : false);
 
   useEffect(() => {
     setloginUserName("");
@@ -182,6 +183,7 @@ export default function Header(props) {
     if (sessionStorage.getItem("access-token") == null) {
       setModalOpenStatus(true);
     }
+    console.log(props);
   }
 
   async function onloginClickHandler(e) {
@@ -217,19 +219,14 @@ export default function Header(props) {
           "access-token",
           rawResponse.headers.get("access-token")
         );
-        console.log(rawResponse.headers.get("access-token"));
         closeModalHandler();
-        console.log("Login Success");
       } else {
         setLoginError(true);
         new Error("Login Failed");
-        console.log("Error Logging in.");
       }
     } catch (e) {
       console.log(e.message);
     }
-
-    console.log("Login Button Clicked");
   }
 
   async function onregisterUserHandler(e) {
@@ -256,7 +253,7 @@ export default function Header(props) {
       registerPassword === "" ||
       registerContactNumber === ""
     ) {
-      console.log("Mandatory Fields missing for Registration");
+    //   console.log("Mandatory Fields missing for Registration");
       return;
     }
 
@@ -280,12 +277,9 @@ export default function Header(props) {
 
       const response = await rawResponse.json();
       if (rawResponse.ok) {
-        console.log("User registration success");
-        console.log(response);
         setRegistrationStatus(true);
       } else {
         new Error("Error when registering the user");
-        console.log("Error in Registering . Error in Fetch");
       }
     } catch (e) {
       console.log(e.message);
@@ -296,24 +290,35 @@ export default function Header(props) {
     <div>
       <header className="header">
         <div className="header-logo-image">
-          <img src={logo}></img>
+          <img src={logo} alt="Movie Logo"></img>
         </div>
         <div className="header-btn">
           <div>
-            {
-              (showBookShowButton && userLoggedIn) ? (
+            {props.showBookShowButton && userLoggedIn ? (
+              <Link to={"/bookshow/" + props.movieId}>
                 <Button
-              style={{ margin: "0 5px" }}
-              variant="contained"
-              color="primary"
-              onClick={onBookShowClickHandler}
-            >
-              BOOK SHOW
-            </Button>
-              ) : ("")
-            }
-            
-            
+                  style={{ margin: "0 5px" }}
+                  variant="contained"
+                  color="primary"
+                >
+                  BOOK SHOW
+                </Button>
+              </Link>
+            ) : (
+              ""
+            )}
+            {props.showBookShowButton && !userLoggedIn ? (
+              <Button
+                style={{ margin: "0 5px" }}
+                variant="contained"
+                color="primary"
+                onClick={onBookShowClickHandler}
+              >
+                BOOK SHOW
+              </Button>
+            ) : (
+              ""
+            )}
           </div>
           <div>
             {userLoggedIn ? (
