@@ -9,48 +9,46 @@ import { GridList } from "@material-ui/core";
 import { GridListTile } from "@material-ui/core";
 import { GridListTileBar } from "@material-ui/core";
 import { withStyles } from "@material-ui/core";
+import { ListSubheader } from "@material-ui/core";
 
-
-const styles = (theme) => ({    
-    gridList: {
-      flexWrap: "wrap",
-      transform: "translateZ(0)",
-    }
-  });
+const styles = (theme) => ({
+  gridList: {
+    flexWrap: "wrap",
+    transform: "translateZ(0)",
+  },
+});
 
 function ImageRender(props) {
   return <img src={props.posterSource} alt={props.altDetails}></img>;
 }
 
 const Details = function (props) {
-    
   const [movieDetails, setMovieDetails] = useState({});
   const [stars, setStars] = useState([
     {
-      id:1,
-      color:"black"
+      id: 1,
+      color: "black",
     },
     {
-      id:2,
-      color:"black"
+      id: 2,
+      color: "black",
     },
     {
-      id:3,
-      color:"black"
+      id: 3,
+      color: "black",
     },
     {
-      id:4,
-      color:"black"
+      id: 4,
+      color: "black",
     },
     {
-      id:5,
-      color:"black"
-    }
-  ])
-
+      id: 5,
+      color: "black",
+    },
+  ]);
 
   const { classes } = props;
-//   console.log("DETAILS PAGE ", props);
+
   useEffect(() => {
     const fetchMovieData = async () => {
       const rawResponse = await fetch(
@@ -65,40 +63,34 @@ const Details = function (props) {
 
       const data = await rawResponse.json();
       setMovieDetails({ ...data });
-      
     };
 
     fetchMovieData();
   }, []);
 
-  useEffect(() => {
-
-  }, [stars]);
+  useEffect(() => {}, [stars]);
 
   const opts = {
-    height: "390",
+    height: "490",
     width: "640",
     playerVars: {
       autoPlay: 0,
+      origin: "http://localhost:3000",
     },
   };
 
   const starIconClickHandler = (id) => {
-    // console.log(e.target.style);
-    // console.log("Icon iD ", id);
     const newStarIcons = [];
-    for(let star of stars) {
+    for (let star of stars) {
       let starIcon = star;
-      
-      if(star.id <= id) {
-        starIcon.color ="yellow";
+
+      if (star.id <= id) {
+        starIcon.color = "yellow";
       } else {
         star.color = "black";
       }
-      newStarIcons.push(starIcon);    
+      newStarIcons.push(starIcon);
     }
-    // console.log(stars);
-    // console.log(newStarIcons);
     setStars(newStarIcons);
   };
 
@@ -181,40 +173,25 @@ const Details = function (props) {
               <span className="bold-text">Rate this movie:</span>
             </Typography>
             {stars.map((star) => (
-              <StarBorderIcon key={star.id} style={{color: star.color}} onClick={() => starIconClickHandler(star.id)}></StarBorderIcon>
+              <StarBorderIcon
+                key={star.id}
+                style={{ color: star.color }}
+                onClick={() => starIconClickHandler(star.id)}
+              ></StarBorderIcon>
             ))}
-
-
-            {/* <StarBorderIcon
-              id="0"
-              onClick={starIconClickHandler}
-            ></StarBorderIcon>
-            <StarBorderIcon
-              id="1"
-              onClick={starIconClickHandler}
-            ></StarBorderIcon>
-            <StarBorderIcon
-              id="2"
-              onClick={starIconClickHandler}
-            ></StarBorderIcon>
-            <StarBorderIcon
-              id="3"
-              onClick={starIconClickHandler}
-            ></StarBorderIcon>
-            <StarBorderIcon
-              id="4"
-              onClick={starIconClickHandler}
-            ></StarBorderIcon> */}
           </div>
           <div className="artist-section">
             <Typography>
               <span className="bold-text">Artists : </span>
             </Typography>
-            <div className="artist-details-section">
+            <div className={classes.root}>
               <GridList className={classes.gridList} cols={2} cellHeight={180}>
+                <GridListTile cols={2} style={{ height: "auto" }}>
+                  <ListSubheader component="div">Superstars</ListSubheader>
+                </GridListTile>
                 {movieDetails.artists &&
                   movieDetails.artists.map((artist) => (
-                    <GridListTile key={artist.id}>
+                    <GridListTile key={artist.id} className="gridTile">
                       <img
                         src={artist.profile_url}
                         alt={artist.first_name + " " + artist.last_name}
@@ -233,4 +210,4 @@ const Details = function (props) {
   );
 };
 
-export default withStyles(styles)(Details)
+export default withStyles(styles)(Details);

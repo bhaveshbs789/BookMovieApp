@@ -21,7 +21,6 @@ import { withStyles } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import "../../assets/no-results.png";
 
-
 const styles = (theme) => ({
   root: {
     display: "flex",
@@ -44,7 +43,7 @@ const styles = (theme) => ({
     minWidth: 240,
     maxWidth: 240,
     margin: theme.spacing.unit,
-  }
+  },
 });
 
 const ITEM_HEIGHT = 48;
@@ -59,20 +58,18 @@ const MenuProps = {
   },
 };
 
-
 function Home(props) {
   const { classes } = props;
   const [movies, setMovies] = useState([]);
   const [upComingMovies, setUpcomingMovies] = useState([]);
   const [releasedMovies, setReleasedMovies] = useState([]);
   const [genres, setGenres] = useState([]);
-  const [artists, setArtists] = useState([]);  
+  const [artists, setArtists] = useState([]);
   const [movieNameFilter, setMovieNameFilter] = useState("");
   const [genreFilter, setGenreFilter] = useState([]);
   const [artistFilter, setartistFilter] = useState([]);
   const [startDateFilter, setStartDateFilter] = useState("");
   const [endDateFilter, setEndDateFilter] = useState("");
-  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -109,7 +106,6 @@ function Home(props) {
 
       const genreDataResponse = await rawGenreResponse.json();
 
-      
       setMovies(moviesDataResponse.movies);
       const upcoming = moviesDataResponse.movies.filter((movie) => {
         return movie.status === "PUBLISHED";
@@ -126,15 +122,19 @@ function Home(props) {
 
     fetchData();
   }, []);
-  
+
   function onArtistsFilterChangeHandler(e) {
-    const {target : {value}} = e;
-    setartistFilter(typeof value === 'string' ? value.split(",") : value)
+    const {
+      target: { value },
+    } = e;
+    setartistFilter(typeof value === "string" ? value.split(",") : value);
   }
 
   function onGenreFilterChangeHandler(e) {
-    const {target : {value}} = e;
-    setGenreFilter(typeof value === 'string' ? value.split(",") : value)
+    const {
+      target: { value },
+    } = e;
+    setGenreFilter(typeof value === "string" ? value.split(",") : value);
   }
 
   function onReleaseMoviesClickHandler(id) {
@@ -153,52 +153,56 @@ function Home(props) {
     setEndDateFilter(e.target.value);
   }
 
+  async function onApplyButtonClickHandler() {
+    if (
+      movieNameFilter === "" &&
+      genreFilter === "" &&
+      artistFilter === "" &&
+      startDateFilter === "" &&
+      endDateFilter === ""
+    )
+      return;
 
-  async function onApplyButtonClickHandler(){
-    if(movieNameFilter === "" && genreFilter === "" && artistFilter === "" && startDateFilter === "" && endDateFilter === "") return;
-    console.log(startDateFilter , endDateFilter , genreFilter, artistFilter);
+    let url = props.baseUrl + "/movies?status=RELEASED";
 
-    let url = props.baseUrl + "/movies?status=RELEASED"
-
-    if(movieNameFilter !== null) {
-        url = url + "&title=" + movieNameFilter;
+    if (movieNameFilter !== null) {
+      url = url + "&title=" + movieNameFilter;
     }
 
-    if(genreFilter !== null) {
-        url =  url + "&genre=" + genreFilter.join(",");
+    if (genreFilter !== null) {
+      url = url + "&genre=" + genreFilter.join(",");
     }
 
-    if(artistFilter !== null) {
-        url =  url + "&artists=" + artistFilter.join(",");
+    if (artistFilter !== null) {
+      url = url + "&artists=" + artistFilter.join(",");
     }
 
-    if(startDateFilter !== null) {
-        url = url + "&start_date=" + startDateFilter;
+    if (startDateFilter !== null) {
+      url = url + "&start_date=" + startDateFilter;
     }
 
-    if(endDateFilter !== null) {
-        url = url + "&end_date=" + endDateFilter;
+    if (endDateFilter !== null) {
+      url = url + "&end_date=" + endDateFilter;
     }
 
     try {
-        const rawResponse = await fetch(encodeURI(url), {
-            method:"GET",
-            headers: {
-                "Accept":"application/json;charset=UTF-8"
-            }
-        });
-        const data = await rawResponse.json();
-        if(rawResponse.ok) {
-            setReleasedMovies(data.movies);
-        } else {
-            new Error("Unable to filter movies")
-        }
-        
-    } catch(e) {
-        console.log("Issue with getting the movies list as per the filter. ")
+      const rawResponse = await fetch(encodeURI(url), {
+        method: "GET",
+        headers: {
+          Accept: "application/json;charset=UTF-8",
+        },
+      });
+      const data = await rawResponse.json();
+      if (rawResponse.ok) {
+        setReleasedMovies(data.movies);
+      } else {
+        new Error("Unable to filter movies");
+      }
+    } catch (e) {
+      console.log("Issue with getting the movies list as per the filter. ");
     }
   }
-  
+
   return (
     <React.Fragment>
       <Header baseUrl={props.baseUrl}></Header>
@@ -235,7 +239,7 @@ function Home(props) {
                   alt={movie.title}
                   className="poster"
                 />
-                {/* <ImageWithFallback fallback={"../../assets/no-results.png"} src={movie.poster_url} alt={movie.title}></ImageWithFallback> */}
+
                 <GridListTileBar
                   title={movie.title}
                   subtitle={
@@ -257,7 +261,11 @@ function Home(props) {
               </Typography>
               <FormControl className={classes.formControls}>
                 <InputLabel htmlFor="movie-name">Movie Name</InputLabel>
-                <Input id="movie-name" type="text" onChange={onMovieNameChangeHandler}></Input>
+                <Input
+                  id="movie-name"
+                  type="text"
+                  onChange={onMovieNameChangeHandler}
+                ></Input>
               </FormControl>
               <br />
               <br />
@@ -274,7 +282,7 @@ function Home(props) {
                 >
                   {genres.map((genre) => (
                     <MenuItem key={genre.id} value={genre.genre}>
-                      <Checkbox 
+                      <Checkbox
                         checked={genreFilter.indexOf(genre.genre) > -1}
                       />
                       <ListItemText primary={genre.genre} />

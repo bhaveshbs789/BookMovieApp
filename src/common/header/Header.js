@@ -36,18 +36,10 @@ function TabPanel(props) {
   );
 }
 
-// TabPanel.propTypes = {
-//   children: PropTypes.node,
-//   index: PropTypes.number.isRequired,
-//   value: PropTypes.number.isRequired,
-// };
-
 TabPanel.propTypes = {
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
-  };
-
-
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
 
 export default function Header(props) {
   const [isModalOpen, setModalOpenStatus] = React.useState(false);
@@ -78,7 +70,6 @@ export default function Header(props) {
   );
   const [registrationSuccess, setRegistrationStatus] = useState(false);
   const [loginError, setLoginError] = useState(false);
-  // const [showBookShowButton, setShowBookShowButton] = useState(userLoggedIn ? true : false);
 
   useEffect(() => {
     setloginUserName("");
@@ -167,7 +158,6 @@ export default function Header(props) {
         },
       });
 
-      // const response = await rawRepsonse.json();
       if (rawRepsonse.ok) {
         setuserLoginStatus(false);
         sessionStorage.removeItem("access-token");
@@ -183,7 +173,6 @@ export default function Header(props) {
     if (sessionStorage.getItem("access-token") == null) {
       setModalOpenStatus(true);
     }
-    console.log(props);
   }
 
   async function onloginClickHandler(e) {
@@ -210,8 +199,6 @@ export default function Header(props) {
           authorization: `Basic ${encodedCredentials}`,
         },
       });
-
-      const response = await rawResponse.json();
 
       if (rawResponse.ok) {
         setuserLoginStatus(true);
@@ -253,7 +240,6 @@ export default function Header(props) {
       registerPassword === "" ||
       registerContactNumber === ""
     ) {
-    //   console.log("Mandatory Fields missing for Registration");
       return;
     }
 
@@ -275,7 +261,6 @@ export default function Header(props) {
         body: JSON.stringify(body),
       });
 
-      const response = await rawResponse.json();
       if (rawResponse.ok) {
         setRegistrationStatus(true);
       } else {
@@ -295,7 +280,10 @@ export default function Header(props) {
         <div className="header-btn">
           <div>
             {props.showBookShowButton && userLoggedIn ? (
-              <Link to={"/bookshow/" + props.movieId}>
+              <Link
+                to={"/bookshow/" + props.movieId}
+                style={{ textDecoration: "none" }}
+              >
                 <Button
                   style={{ margin: "0 5px" }}
                   variant="contained"

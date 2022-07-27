@@ -54,5 +54,10 @@
     color: crimson;
 }
 
+.login-success {
+    display: block;
+    margin: 10px 0;
+    color:darkgreen;
+}
 
 
